@@ -3,14 +3,13 @@ import random
 from datetime import datetime, timedelta
 
 # Configurações gerais do dataset
-n_linhas = 400  # Definindo o número de linhas
+n_linhas = 1000  # Definindo o número de linhas
 ids = list(range(101, 101 + n_linhas))
 
 # Dados possíveis para gerar aleatoriamente
 idades = [random.randint(18, 60) for _ in range(n_linhas)]
 generos = [random.choice(["Masculino", "Feminino"]) for _ in range(n_linhas)]
-cidades = [random.choice(["Fortaleza", "São Paulo", "Rio de Janeiro", "Salvador", "Belo Horizonte"]) for _ in
-           range(n_linhas)]
+cidades = [random.choice(["Fortaleza", "São Paulo", "Rio de Janeiro", "Salvador", "Belo Horizonte"]) for _ in range(n_linhas)]
 estados = {
     "Fortaleza": "Ceará",
     "São Paulo": "São Paulo",
@@ -25,35 +24,37 @@ produtos_variados = [
 avaliacoes = ["Excelente", "Boa", "Neutra", "Ruim", "Péssimo"]
 pagamentos = ["Pix", "Crédito", "Débito", "Dinheiro"]
 
+# Gerar nomes fictícios
+nomes_masculinos = ["Luiz", "João", "Carlos", "Pedro", "Lucas", "Ricardo", "Fernando", "Mateus", "Henrique", "Tiago"]
+nomes_femininos = ["Carla", "Maria", "Ana", "Clara", "Fernanda", "Juliana", "Patrícia", "Bianca", "Camila", "Larissa"]
+nomes_clientes = [random.choice(nomes_masculinos) if genero == "Masculino" else random.choice(nomes_femininos) for genero in generos]
+
 # Expandir os dados para ter cada produto e seu respectivo valor em linhas separadas com avaliações e pagamentos diferentes
 expanded_data = []
 for i in range(n_linhas):
     cliente_id = ids[i]
+    nome = nomes_clientes[i]
     idade = idades[i]
     genero = generos[i]
     cidade = cidades[i]
     estado = estados[cidade]
 
-    # Gerar um número aleatório de produtos que o cliente comprou, mas não maior que a quantidade de produtos disponíveis
-    num_produtos = random.randint(1, min(6,
-                                         len(produtos_variados)))  # O máximo de produtos será 6 ou o número total de produtos
-
-    # Gerar os produtos e valores conforme o número aleatório de produtos
+    # Gerar um número aleatório de produtos que o cliente comprou
+    num_produtos = random.randint(1, min(6, len(produtos_variados)))
     produtos_comprados = random.sample(produtos_variados, num_produtos)
     valores = [round(random.uniform(5, 200), 2) for _ in produtos_comprados]
-    data_inicial = datetime(2023, 1, 1)  # Data inicial para compras
+    data_inicial = datetime(2023, 1, 1)
     datas_compras = [data_inicial + timedelta(days=random.randint(0, 365)) for _ in produtos_comprados]
 
-    # Garantir que o número de avaliações aleatórias não seja maior que a quantidade disponível
     avaliacoes_aleatorias = random.sample(avaliacoes, min(len(produtos_comprados), len(avaliacoes)))
-
     pagamentos_aleatorios = random.choices(pagamentos, k=len(produtos_comprados))
 
     for produto, valor, data_compra, avaliacao, pagamento in zip(
-            produtos_comprados, valores, datas_compras, avaliacoes_aleatorias, pagamentos_aleatorios
+        produtos_comprados, valores, datas_compras, avaliacoes_aleatorias, pagamentos_aleatorios
     ):
         expanded_data.append({
-            "ID_Cliente": cliente_id,
+            "Nome": nome,
+            "ID": cliente_id,
             "Idade": idade,
             "Gênero": genero,
             "Cidade": cidade,
